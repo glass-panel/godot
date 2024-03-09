@@ -116,12 +116,17 @@ elif platform_arg == "web":
     # Use generic POSIX build toolchain for Emscripten.
     custom_tools = ["cc", "c++", "ar", "link", "textfile", "zip"]
 elif os.name == "nt" and methods.get_cmdline_bool("use_mingw", False):
-    custom_tools = ["mingw"]
+    if methods.get_cmdline_bool("use_llvm", False):
+        custom_tools = ["clang", "clang++", "as", "ar", "link"]
+    else:
+        custom_tools = ["mingw"]
 
 # We let SCons build its default ENV as it includes OS-specific things which we don't
 # want to have to pull in manually.
 # Then we prepend PATH to make it take precedence, while preserving SCons' own entries.
 env_base = Environment(tools=custom_tools)
+print(f'### 1 init: CXX={env_base["CXX"]}')
+
 env_base.PrependENVPath("PATH", os.getenv("PATH"))
 env_base.PrependENVPath("PKG_CONFIG_PATH", os.getenv("PKG_CONFIG_PATH"))
 if "TERM" in os.environ:  # Used for colored output.
@@ -436,6 +441,7 @@ else:  # Release
 
 env_base["optimize"] = ARGUMENTS.get("optimize", opt_level)
 env_base["debug_symbols"] = methods.get_cmdline_bool("debug_symbols", env_base.dev_build)
+print(f'### 2 options: CXX={env_base["CXX"]}')
 
 if env_base.editor_build:
     env_base.Append(CPPDEFINES=["TOOLS_ENABLED"])
@@ -485,7 +491,7 @@ if selected_platform in platform_list:
     import detect
 
     env = env_base.Clone()
-
+    print(f'### 3 env: CXX={env["CXX"]}')
     # Default num_jobs to local cpu count if not user specified.
     # SCons has a peculiarity where user-specified options won't be overridden
     # by SetOption, so we can rely on this to know if we should use our default.
@@ -573,7 +579,7 @@ if selected_platform in platform_list:
     # Must happen after the flags' definition, as configure is when most flags
     # are actually handled to change compile options, etc.
     detect.configure(env)
-
+    print(f'### 4 detect: CXX={env["CXX"]}')
     print(f'Building for platform "{selected_platform}", architecture "{env["arch"]}", target "{env["target"]}".')
     if env.dev_build:
         print("NOTE: Developer build, with debug optimization level and debug symbols (unless overridden).")

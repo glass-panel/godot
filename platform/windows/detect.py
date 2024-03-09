@@ -80,9 +80,11 @@ def get_mingw_bin_prefix(prefix, arch):
     else:
         mingw_bin_prefix = prefix + "bin/"
 
-    if arch == "x86_64":
+    self_arch = detect_arch()
+
+    if arch == "x86_64" and self_arch != "x86_64":
         mingw_bin_prefix += "x86_64-w64-mingw32-"
-    elif arch == "x86_32":
+    elif arch == "x86_32" and self_arch != "x86_32":
         mingw_bin_prefix += "i686-w64-mingw32-"
     elif arch == "arm32":
         mingw_bin_prefix += "armv7-w64-mingw32-"
@@ -593,6 +595,7 @@ def configure_mingw(env: "SConsEnvironment"):
         env["use_llvm"] = True
 
     if env["use_llvm"] and not try_cmd("clang --version", env["mingw_prefix"], env["arch"]):
+        print(f"### clang not detected!")
         env["use_llvm"] = False
 
     # TODO: Re-evaluate the need for this / streamline with common config.
@@ -628,7 +631,6 @@ def configure_mingw(env: "SConsEnvironment"):
         env["x86_libtheora_opt_gcc"] = True
 
     mingw_bin_prefix = get_mingw_bin_prefix(env["mingw_prefix"], env["arch"])
-
     if env["use_llvm"]:
         env["CC"] = mingw_bin_prefix + "clang"
         env["CXX"] = mingw_bin_prefix + "clang++"
@@ -715,6 +717,9 @@ def configure_mingw(env: "SConsEnvironment"):
             "ntdll",
         ]
     )
+    
+    if env["use_llvm"]:
+        env.Append(LIBS=["atomic"])
 
     if env.debug_features:
         env.Append(LIBS=["psapi", "dbghelp"])

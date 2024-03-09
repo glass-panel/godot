@@ -157,7 +157,7 @@ void mbedtls_debug_set_threshold(int threshold);
  */
 void mbedtls_debug_print_msg(const mbedtls_ssl_context *ssl, int level,
                              const char *file, int line,
-                             const char *format, ...) MBEDTLS_PRINTF_ATTRIBUTE(5, 6);
+                             const char *format, ...) /*MBEDTLS_PRINTF_ATTRIBUTE(5, 6)*/;
 
 /**
  * \brief   Print the return value of a function to the debug output. This
