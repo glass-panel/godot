@@ -57,6 +57,7 @@ tests/data/crypto/out*
 *.lib
 *.lo
 *.o
+*.o.ll
 *.os
 *.ox
 *.Plo
