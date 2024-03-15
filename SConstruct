@@ -818,6 +818,11 @@ if selected_platform in platform_list:
         if env["werror"]:
             env.Append(CCFLAGS=["-Werror"])
 
+    ## Use llvm IR as intermidate object files
+    if env["use_llvm"]:
+        from build_llvm_ir import hijack_builders
+        hijack_builders(env)
+
     if hasattr(detect, "get_program_suffix"):
         suffix = "." + detect.get_program_suffix()
     else:

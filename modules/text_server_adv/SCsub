@@ -124,6 +124,7 @@ if env["builtin_harfbuzz"]:
         "src/hb-subset.cc",
         "src/hb-ucd.cc",
         "src/hb-unicode.cc",
+        "src/graph/gsubgpos-context.cc"
         # "src/hb-uniscribe.cc",
     ]
 
@@ -434,7 +435,7 @@ if env["builtin_icu4c"]:
         "common/uset.cpp",
         "common/uset_props.cpp",
         "common/usetiter.cpp",
-        # "common/ushape.cpp",
+        "common/ushape.cpp",
         "common/usprep.cpp",
         "common/ustack.cpp",
         "common/ustr_cnv.cpp",
